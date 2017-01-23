@@ -67,31 +67,6 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 		return fmt.Errorf("Exchange Declare: %s", err)
 	}
 
-	q, err := channel.QueueDeclare(
-		*queueName,    // name
-		*queueDurable, // durable
-		false,         // delete when used
-		false,         // exclusive
-		false,         // no-wait
-		nil,           // arguments
-	)
-
-	if err != nil {
-		fmt.Printf("Warning:QueueDeclare declare %s\n", err)
-	} else {
-		err = channel.QueueBind(
-			q.Name,     // queue name
-			routingKey, // routing key
-			exchange,   // exchange
-			false,
-			nil,
-		)
-
-		if err != nil {
-			fmt.Printf("QueueBind declare %s \n", err)
-		}
-	}
-
 	for i := 0; i < (*repeat); i++ {
 
 		b := body + "" + strconv.Itoa(i)

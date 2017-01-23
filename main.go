@@ -21,7 +21,7 @@ var (
 	reliable     = flag.Bool("reliable", true, "Wait for the publisher confirmation before exiting")
 	repeat       = flag.Int("repeat", 1, "How many times do I send the message")
 	queueName    = flag.String("queue-name", "hello", "Name of the test queue")
-	queueDuable  = flag.Bool("queue-durable", true, "whether the queue is durable or not")
+	queueDurable = flag.Bool("queue-durable", true, "whether the queue is durable or not")
 )
 
 func init() {
@@ -54,13 +54,26 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 		return fmt.Errorf("Channel: %s", err)
 	}
 
-	q, err := channel.QueueDeclare(
-		*queueName,   // name
-		*queueDuable, // durable
-		false,        // delete when used
-		false,        // exclusive
-		false,        // no-wait
+	log.Printf("got Channel, declaring %q Exchange (%q)", exchangeType, exchange)
+	if err := channel.ExchangeDeclare(
+		exchange,     // name
+		exchangeType, // type
+		true,         // durable
+		false,        // auto-deleted
+		false,        // internal
+		false,        // noWait
 		nil,          // arguments
+	); err != nil {
+		return fmt.Errorf("Exchange Declare: %s", err)
+	}
+
+	q, err := channel.QueueDeclare(
+		*queueName,    // name
+		*queueDurable, // durable
+		false,         // delete when used
+		false,         // exclusive
+		false,         // no-wait
+		nil,           // arguments
 	)
 
 	if err != nil {
@@ -77,19 +90,6 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 		if err != nil {
 			fmt.Printf("QueueBind declare %s \n", err)
 		}
-	}
-
-	log.Printf("got Channel, declaring %q Exchange (%q)", exchangeType, exchange)
-	if err := channel.ExchangeDeclare(
-		exchange,     // name
-		exchangeType, // type
-		true,         // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // noWait
-		nil,          // arguments
-	); err != nil {
-		return fmt.Errorf("Exchange Declare: %s", err)
 	}
 
 	for i := 0; i < (*repeat); i++ {

@@ -20,6 +20,8 @@ var (
 	body         = flag.String("body", "foobar", "Body of message")
 	reliable     = flag.Bool("reliable", true, "Wait for the publisher confirmation before exiting")
 	repeat       = flag.Int("repeat", 1, "How many times do I send the message")
+	queueName    = flag.String("queue-name", "hello", "Name of the test queue")
+	queueDuable  = flag.Bool("queue-durable", true, "whether the queue is durable or not")
 )
 
 func init() {
@@ -53,12 +55,12 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 	}
 
 	q, err := channel.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when used
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		*queueName,   // name
+		*queueDuable, // durable
+		false,        // delete when used
+		false,        // exclusive
+		false,        // no-wait
+		nil,          // arguments
 	)
 
 	if err != nil {
@@ -71,10 +73,10 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 			false,
 			nil,
 		)
-	}
 
-	if err != nil {
-		return fmt.Errorf("QueueBind declare %s", err)
+		if err != nil {
+			fmt.Printf("QueueBind declare %s \n", err)
+		}
 	}
 
 	log.Printf("got Channel, declaring %q Exchange (%q)", exchangeType, exchange)

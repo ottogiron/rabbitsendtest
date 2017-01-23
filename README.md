@@ -20,7 +20,7 @@ Will send 200 messages with foo concatenated with i, foo0..foo199
 ## Usage
 
 ```sh
-Usage of rabbitsendtest:
+sage of rabbitsendtest:
   -body string
         Body of message (default "foobar")
   -exchange string
@@ -29,6 +29,10 @@ Usage of rabbitsendtest:
         Exchange type - direct|fanout|topic|x-custom (default "direct")
   -key string
         AMQP routing key (default "test-key")
+  -queue-durable
+        whether the queue is durable or not (default true)
+  -queue-name string
+        Name of the test queue (default "hello")
   -reliable
         Wait for the publisher confirmation before exiting (default true)
   -repeat int

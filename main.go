@@ -20,8 +20,6 @@ var (
 	body         = flag.String("body", "foobar", "Body of message")
 	reliable     = flag.Bool("reliable", true, "Wait for the publisher confirmation before exiting")
 	repeat       = flag.Int("repeat", 1, "How many times do I send the message")
-	queueName    = flag.String("queue-name", "hello", "Name of the test queue")
-	queueDurable = flag.Bool("queue-durable", true, "whether the queue is durable or not")
 )
 
 func init() {

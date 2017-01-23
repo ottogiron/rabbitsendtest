@@ -62,6 +62,8 @@ func publish(amqpURI, exchange, exchangeType, routingKey, body string, reliable 
 	)
 
 	if err != nil {
+		fmt.Printf("Warning:QueueDeclare declare %s\n", err)
+	} else {
 		err = channel.QueueBind(
 			q.Name,     // queue name
 			routingKey, // routing key
